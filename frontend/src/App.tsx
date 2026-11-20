@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getConfig, type NetSelection, type Network, type ServerConfig } from "./api";
 import { AirdropTab } from "./components/AirdropTab";
 import { BalanceTab } from "./components/BalanceTab";
-import { NETWORK_OPTIONS, NetworkPicker, validateRpcUrl } from "./components/NetworkPicker";
+import { loadSavedRpcUrls, NETWORK_OPTIONS, NetworkPicker, validateRpcUrl } from "./components/NetworkPicker";
 import { SendTab } from "./components/SendTab";
 import { SwapTab } from "./components/SwapTab";
 import { WalletBar } from "./components/WalletBar";
@@ -21,7 +21,7 @@ export default function App() {
   const [serverConfig, setServerConfig] = useState<ServerConfig | null>(null);
   const [backendError, setBackendError] = useState<string | null>(null);
   const [network, setNetwork] = useState<Network>("devnet");
-  const [rpcUrl, setRpcUrl] = useState("http://127.0.0.1:8899");
+  const [rpcUrl, setRpcUrl] = useState(() => loadSavedRpcUrls()[0] ?? "http://127.0.0.1:8899");
   const [tab, setTab] = useState<Tab>("airdrop");
   const [busy, setBusy] = useState(false);
   const wallet = useWallet();

@@ -97,7 +97,7 @@ function ImportKeyForm({ wallet, onDone }: { wallet: WalletState; onDone(): void
         }}
         autoFocus
       />
-      <button type="submit" className="primary" disabled={!secret.trim()}>
+      <button type="submit" disabled={!secret.trim()}>
         Import
       </button>
       <button type="button" onClick={onDone}>

@@ -28,7 +28,7 @@ body {
 
 .card {
   width: 100%;
-  max-width: 520px;
+  max-width: 800px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -449,4 +449,50 @@ input.has-prefix {
 .import-key .hint {
   flex-basis: 100%;
   margin: 0;
+}
+
+.rpc-row {
+  display: flex;
+  gap: 8px;
+}
+
+.rpc-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.saved-rpcs {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.saved-rpcs li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.saved-rpcs li.active {
+  border-color: var(--accent);
+}
+
+.saved-rpcs .rpc-url {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  border: 0;
+  font-size: 0.8rem;
+}
+
+.saved-rpcs .icon {
+  border: 0;
 }

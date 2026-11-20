@@ -72,6 +72,10 @@ sign it, and relays it through `/api/send`. The server only forwards the signed 
 the user's key. Routing through the backend means sends use the same RPC as the rest of the app (including
 custom ones) and confirm over HTTP polling, so RPCs without WebSocket support work.
 
+**Saved RPCs.** With **Custom RPC** selected, click **Save** (or press Enter) to remember the URL in the
+browser's `localStorage` (up to 10, most recent first). Saved URLs are listed under the field: click one to
+use it, × to remove it. The most recent one is pre-filled on the next visit.
+
 **Wallets.** Connect Phantom (or Solflare/Backpack), or click **Use private key** and paste a secret key
 (base58 as exported by Phantom/Solflare, or a Solana CLI `id.json` byte array). A pasted key is parsed and
 used for signing in the browser only: it's held in memory, never saved or sent to the backend, and is gone on

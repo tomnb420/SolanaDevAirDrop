@@ -440,3 +440,13 @@ input.has-prefix {
   margin: 0;
   text-align: right;
 }
+
+.import-key input {
+  flex: 1 1 220px;
+  width: auto;
+}
+
+.import-key .hint {
+  flex-basis: 100%;
+  margin: 0;
+}

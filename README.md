@@ -1,4 +1,4 @@
-# Solana Airdrop
+# Solana Wallet Manager
 
 Send SOL to any wallet through a 4-step flow: pick a network, enter an amount, enter a wallet public key, and confirm.
 
@@ -51,6 +51,10 @@ npm run dev                            # starts the API and the web app together
 `POST /api/send` `{ network, rpcUrl?, tx: "<base64 signed tx>", lastValidBlockHeight }` → `{ signature, rpcUrl }`
 
 `GET /api/token-balance?network=mainnet&pubkey=<base58>&mint=<mint>` → `{ mint, amount, decimals, uiAmount }`
+
+`GET /api/tokens?network=devnet&pubkey=<base58>[&rpcUrl=…]` → `{ owner, tokens: [{ mint, amount, decimals, uiAmount, program, name, symbol, accounts }] }`:
+every SPL Token and Token-2022 holding, merged per mint, with name/symbol from Token-2022 or Metaplex metadata when present.
+The **Balance** tab lists these under the SOL balance (empty token accounts are hidden behind a toggle).
 
 `GET /api/swap/quote?inputMint=…&outputMint=…&amount=<base units>&slippageBps=50` → Jupiter quote
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getBalance, getSolPrice, getTokenBalance, type NetSelection, type SolPrice } from "./api";
+import { getBalance, getSolPrice, getTokenBalance, getTokens, type NetSelection, type SolPrice, type TokenHolding } from "./api";
 
 export const BASE58_PUBKEY = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 export const AMOUNT = /^\d+(\.\d{1,9})?$/;
@@ -129,4 +129,33 @@ export function useBalance(net: NetSelection | null, address: string | null) {
   }, [refresh]);
 
   return { lamports, loading, error, refresh };
+}
+
+/** All SPL / Token-2022 holdings of `address` on `net`; refetches when either changes. */
+export function useTokens(net: NetSelection | null, address: string | null) {
+  const [tokens, setTokens] = useState<TokenHolding[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const key = net && address && isPubkey(address) ? `${net.network}|${net.rpcUrl ?? ""}|${address}` : null;
+
+  const refresh = useCallback(async () => {
+    if (!key || !net || !address) return;
+    setLoading(true);
+    setError(null);
+    try {
+      setTokens((await getTokens(net, address.trim())).tokens);
+    } catch (e) {
+      setTokens(null);
+      setError((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }, [key]); // `key` captures net + address
+
+  useEffect(() => {
+    setTokens(null);
+    refresh();
+  }, [refresh]);
+
+  return { tokens, loading, error, refresh };
 }

@@ -42,10 +42,15 @@ async function viaFaucetRpc(conn: Connection, to: PublicKey, lamports: number): 
 async function viaTransfer(conn: Connection, to: PublicKey, lamports: number): Promise<string> {
   const faucet = config.faucet;
   if (!faucet) throw new ApiError("No faucet wallet is configured on the server", 503);
+  const address = faucet.publicKey.toBase58();
 
   const balance = await conn.getBalance(faucet.publicKey);
   if (balance < lamports + 5_000) {
-    throw new ApiError(`Faucet wallet has insufficient funds (${balance / LAMPORTS_PER_SOL} SOL)`, 503);
+    throw new ApiError(
+      `Faucet wallet ${address} has ${balance / LAMPORTS_PER_SOL} SOL, not enough for this request. ` +
+        "Top it up (devnet/testnet: https://faucet.solana.com) and try again.",
+      503,
+    );
   }
   const latest = await conn.getLatestBlockhash("confirmed");
   const tx = new Transaction({ feePayer: faucet.publicKey, ...latest }).add(
@@ -80,7 +85,8 @@ export async function airdrop(req: AirdropRequest): Promise<AirdropResult> {
       if (!config.faucet) {
         const msg = err instanceof Error ? err.message : String(err);
         throw new ApiError(
-          `RPC airdrop failed: ${msg.trim()}. Set FAUCET_SECRET_KEY on the server to send from a funded wallet instead.`,
+          `RPC airdrop failed: ${msg.trim()}. Set FAUCET_SECRET_KEY on the server (npm run keygen -w backend) ` +
+            "and fund that wallet to send from it instead.",
           502,
         );
       }

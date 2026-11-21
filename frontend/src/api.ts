@@ -89,6 +89,20 @@ export interface TokenBalance {
 export const getTokenBalance = (net: NetSelection, pubkey: string, mint: string) =>
   request<TokenBalance>(`/api/token-balance?${query(net, { pubkey, mint })}`);
 
+export interface TokenHolding {
+  mint: string;
+  amount: string;
+  decimals: number;
+  uiAmount: string;
+  program: "token" | "token-2022";
+  name: string | null;
+  symbol: string | null;
+  accounts: number;
+}
+
+export const getTokens = (net: NetSelection, pubkey: string) =>
+  request<{ owner: string; tokens: TokenHolding[] }>(`/api/tokens?${query(net, { pubkey })}`);
+
 /** Jupiter quote; kept opaque except for the fields the UI reads, and passed back verbatim to build. */
 export interface SwapQuote {
   inputMint: string;
@@ -117,16 +131,26 @@ export const sendSigned = (net: NetSelection, tx: string, lastValidBlockHeight: 
   request<SendResult>("/api/send", post({ ...net, tx, lastValidBlockHeight }));
 
 export function explorerTxUrl(signature: string, net: NetSelection, rpcUrl: string): string {
-  return explorerUrl(`tx/${signature}`, net, rpcUrl);
+  return explorerUrl("tx", signature, net, rpcUrl);
 }
 
 export function explorerAddressUrl(address: string, net: NetSelection): string {
-  return explorerUrl(`address/${address}`, net, net.rpcUrl ?? "");
+  return explorerUrl("account", address, net, net.rpcUrl ?? "");
 }
 
-function explorerUrl(path: string, net: NetSelection, rpcUrl: string): string {
-  const base = `https://explorer.solana.com/${path}`;
-  if (net.network === "mainnet") return base;
-  if (net.network === "custom") return `${base}?cluster=custom&customUrl=${encodeURIComponent(rpcUrl)}`;
-  return `${base}?cluster=${net.network}`;
+export function explorerTokenUrl(mint: string, net: NetSelection): string {
+  return explorerUrl("token", mint, net, net.rpcUrl ?? "");
+}
+
+/**
+ * Solscan for the public clusters. Solscan can't read an arbitrary RPC, so custom networks
+ * (local validators, forks) fall back to Solana Explorer, which can.
+ */
+function explorerUrl(kind: "tx" | "account" | "token", id: string, net: NetSelection, rpcUrl: string): string {
+  if (net.network === "custom") {
+    const path = kind === "tx" ? `tx/${id}` : `address/${id}`;
+    return `https://explorer.solana.com/${path}?cluster=custom&customUrl=${encodeURIComponent(rpcUrl)}`;
+  }
+  const base = `https://solscan.io/${kind}/${id}`;
+  return net.network === "mainnet" ? base : `${base}?cluster=${net.network}`;
 }

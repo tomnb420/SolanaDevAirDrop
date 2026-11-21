@@ -41,7 +41,7 @@ export default function App() {
 
   return (
     <main className="card">
-      <h1>Solana Airdrop</h1>
+      <h1>Solana Wallet Manager</h1>
       <p className="subtitle">Airdrop, check balances, send SOL and swap SOL/USDT.</p>
 
       <NetworkPicker

@@ -6,6 +6,7 @@ import { config } from "./config.js";
 import { getSolPrice } from "./price.js";
 import { ApiError } from "./solana.js";
 import { buildSwap, getQuote, getTokenBalance } from "./swap.js";
+import { getTokens } from "./tokens.js";
 import { getBalance, getBlockhash, sendSigned } from "./wallet.js";
 
 const app = express();
@@ -52,6 +53,10 @@ app.get("/api/price", async (_req, res) => {
 
 app.get("/api/token-balance", limiter(120), async (req, res) => {
   res.json(await getTokenBalance(req.query));
+});
+
+app.get("/api/tokens", limiter(60), async (req, res) => {
+  res.json(await getTokens(req.query));
 });
 
 app.get("/api/swap/quote", limiter(120), async (req, res) => {
